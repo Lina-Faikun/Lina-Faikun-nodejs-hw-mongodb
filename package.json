@@ -4,6 +4,7 @@
   "description": "HW2: MongoDB Contacts",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "import:contacts": "node scripts/importContacts.js"
   },
   "dependencies": {
