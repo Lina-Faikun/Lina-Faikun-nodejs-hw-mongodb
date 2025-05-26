@@ -1,4 +1,4 @@
-import app from './index.js';
+import app from '../index.js';
 import { initMongoConnection } from './db/initMongoConnection.js';
 
 const PORT = process.env.PORT || 3000;
