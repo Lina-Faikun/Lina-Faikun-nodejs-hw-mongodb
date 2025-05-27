@@ -2,10 +2,10 @@
   "name": "contacts-mongodb",
   "version": "1.0.0",
   "description": "HW2: MongoDB Contacts",
-  "type": "module",                        
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/index.js",
     "import:contacts": "node scripts/importContacts.js"
   },
   "dependencies": {
