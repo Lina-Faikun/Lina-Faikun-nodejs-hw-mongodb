@@ -4,9 +4,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const initMongoConnection = async () => {
-  const uri = process.env.MONGODB_URI;
+  const {
+    MONGODB_USER,
+    MONGODB_PASSWORD,
+    MONGODB_URL,
+    MONGODB_DB
+  } = process.env;
 
-  if (!uri) throw new Error('MongoDB URI is not defined in .env');
+  if (!MONGODB_USER || !MONGODB_PASSWORD || !MONGODB_URL || !MONGODB_DB) {
+    throw new Error('One or more MongoDB environment variables are missing');
+  }
+
+  const uri = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}/${MONGODB_DB}?retryWrites=true&w=majority`;
 
   await mongoose.connect(uri);
   console.log('MongoDB connected');
