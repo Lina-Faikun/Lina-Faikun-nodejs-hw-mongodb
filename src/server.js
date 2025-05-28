@@ -28,6 +28,10 @@ app.get('/api/contacts/test', (req, res) => {
 app.use('/api/contacts', contactsRouter);
 
 // Middleware для 404 (повинен бути **після** всіх маршрутів)
+app.get('/', (req, res) => {
+  res.send('Welcome to Contacts API 🎉');
+});
+
 app.use((req, res) => {
   res.status(404).json({
     status: 404,
