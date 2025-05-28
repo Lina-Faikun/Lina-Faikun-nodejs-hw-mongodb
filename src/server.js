@@ -14,15 +14,25 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// ⚠️ БЕЗ /api
-app.use('/contacts', contactsRouter);
+// Тестовий маршрут
+app.get('/api/contacts/test', (req, res) => {
+  try {
+    res.json({ message: 'Test route works!' });
+  } catch (error) {
+    console.error('Test route error:', error);
+    res.status(500).json({ status: 500, message: error.message, data: null });
+  }
+});
 
-// Not found middleware
+// Підключення роутера для контактів
+app.use('/api/contacts', contactsRouter);
+
+// Middleware для 404 (повинен бути **після** всіх маршрутів)
 app.use((req, res) => {
   res.status(404).json({
     status: 404,
     message: 'Route not found',
-    data: null
+    data: null,
   });
 });
 
@@ -32,12 +42,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({
     status: 500,
     message: 'Internal Server Error',
-    data: null
+    data: null,
   });
 });
-
-
-
-
 
 export default app;
