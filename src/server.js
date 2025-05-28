@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // Тестовий маршрут
-app.get('/api/contacts/test', (req, res) => {
+app.get('/contacts/test', (req, res) => {
   try {
     res.json({ message: 'Test route works!' });
   } catch (error) {
@@ -25,7 +25,7 @@ app.get('/api/contacts/test', (req, res) => {
 });
 
 // Підключення роутера для контактів
-app.use('/api/contacts', contactsRouter);
+app.use('/contacts', contactsRouter);
 
 // Middleware для 404 (повинен бути **після** всіх маршрутів)
 app.get('/', (req, res) => {
