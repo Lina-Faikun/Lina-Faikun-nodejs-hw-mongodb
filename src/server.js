@@ -1,53 +1,34 @@
+import express from "express";
+import morgan from "morgan";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import contactsRouter from './routes/contactsRoutes.js';
-import { initMongoConnection } from './db/initMongoConnection.js';
+import contactsRouter from "./routers/contacts.js";
+import errorHandler from "./middlewares/errorHandler.js";
+import notFoundHandler from "./middlewares/notFoundHandler.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+app.use(morgan("dev"));
 app.use(express.json());
 
-// Тестовий маршрут
-app.get('/contacts/test', (req, res) => {
-  try {
-    res.json({ message: 'Test route works!' });
-  } catch (error) {
-    console.error('Test route error:', error);
-    res.status(500).json({ status: 500, message: error.message, data: null });
-  }
-});
+app.use("/contacts", contactsRouter);
 
-// Підключення роутера для контактів
-app.use('/contacts', contactsRouter);
+app.use(notFoundHandler);
+app.use(errorHandler);
 
-// Middleware для 404 (повинен бути **після** всіх маршрутів)
-app.get('/', (req, res) => {
-  res.send('Welcome to Contacts API 🎉');
-});
+const { DB_HOST, PORT = 3000 } = process.env;
 
-app.use((req, res) => {
-  res.status(404).json({
-    status: 404,
-    message: 'Route not found',
-    data: null,
+mongoose
+  .connect(DB_HOST)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Database connection error:", error);
+    process.exit(1);
   });
-});
-
-// Central error handler
-app.use((err, req, res, next) => {
-  console.error('❌ Error:', err.message);
-  res.status(500).json({
-    status: 500,
-    message: 'Internal Server Error',
-    data: null,
-  });
-});
-
-export default app;
