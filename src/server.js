@@ -1,34 +1,23 @@
 import express from "express";
-import morgan from "morgan";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-
+import cors from "cors";
+import logger from "pino";
 import contactsRouter from "./routers/contacts.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import notFoundHandler from "./middlewares/notFoundHandler.js";
 
-dotenv.config();
-
+const log = logger();
 const app = express();
 
-app.use(morgan("dev"));
+app.use(cors());
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.json({ message: "API is working!" });
+});
+
 
 app.use("/contacts", contactsRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-const { DB_HOST, PORT = 3000 } = process.env;
-
-mongoose
-  .connect(DB_HOST)
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error("Database connection error:", error);
-    process.exit(1);
-  });
+export default app;
