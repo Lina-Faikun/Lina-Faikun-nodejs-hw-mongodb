@@ -1,15 +1,21 @@
-const Contact = require("../models/contact");
+import Contact from '../models/contact.js';
 
-const listContacts = () => Contact.find();
-const getContactById = (id) => Contact.findById(id);
-const addContact = (body) => Contact.create(body);
-const updateContact = (id, body) => Contact.findByIdAndUpdate(id, body, { new: true });
-const removeContact = (id) => Contact.findByIdAndDelete(id);
+export const getAllContacts = async () => {
+  return await Contact.find();
+};
 
-module.exports = {
-  listContacts,
-  getContactById,
-  addContact,
-  updateContact,
-  removeContact,
+export const getContactById = async (id) => {
+  return await Contact.findById(id);
+};
+
+export const createContact = async (contactData) => {
+  return await Contact.create(contactData);
+};
+
+export const updateContact = async (id, contactData) => {
+  return await Contact.findByIdAndUpdate(id, contactData, { new: true });
+};
+
+export const deleteContact = async (id) => {
+  return await Contact.findByIdAndDelete(id);
 };

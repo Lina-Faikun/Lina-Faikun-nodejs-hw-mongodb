@@ -1,3 +1,5 @@
+import createError from 'http-errors';
+
 export default function notFoundHandler(req, res, next) {
-  res.status(404).json({ message: "Not found" });
+  next(createError(404, 'Route not found'));
 }

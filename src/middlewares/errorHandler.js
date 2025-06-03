@@ -1,4 +1,7 @@
 export default function errorHandler(err, req, res, next) {
-  const { status = 500, message = "Server error" } = err;
-  res.status(status).json({ message });
+  res.status(err.status || 500).json({
+    status: err.status || 500,
+    message: err.message || 'Something went wrong',
+    data: err.message,
+  });
 }
