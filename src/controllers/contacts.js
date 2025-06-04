@@ -2,7 +2,18 @@ import * as contactsService from '../services/contacts.js';
 import createError from 'http-errors';
 
 export const getAllContacts = async (req, res) => {
-  const contacts = await contactsService.getAllContacts();
+  const { page = 1, limit = 10, sortBy, sortByDesc, filter } = req.query;
+
+  const paginationOptions = {
+    page: parseInt(page),
+    limit: parseInt(limit),
+    sortBy,
+    sortByDesc,
+    filter,
+  };
+
+  const contacts = await contactsService.getAllContacts(paginationOptions);
+
   res.status(200).json({
     status: 200,
     message: 'Successfully retrieved all contacts',
@@ -48,5 +59,5 @@ export const deleteContact = async (req, res) => {
   if (!result) {
     throw createError(404, 'Contact not found');
   }
-  res.status(204).send(); // No content
+  res.status(204).send(); // No Content
 };
