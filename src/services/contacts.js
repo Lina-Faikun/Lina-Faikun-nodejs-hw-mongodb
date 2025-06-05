@@ -1,39 +1,25 @@
 import Contact from '../models/contact.js';
 
-export const getAllContacts = async ({ page, limit, sortBy, sortByDesc, filter }) => {
+export const getAllContacts = async ({ page, limit, sortBy, sortOrder, isFavourite, contactType }) => {
   const skip = (page - 1) * limit;
 
-  // Формування об'єкту сортування
-  const sortOptions = {};
-  if (sortBy) {
-    sortOptions[sortBy] = 1;
-  } else if (sortByDesc) {
-    sortOptions[sortByDesc] = -1;
+  const filter = {};
+  if (isFavourite !== undefined) {
+    filter.isFavourite = isFavourite === 'true';
+  }
+  if (contactType) {
+    filter.contactType = contactType;
   }
 
-  // Вибір лише певних полів (наприклад name,email)
-  const selectFields = filter ? filter.split(',').join(' ') : '';
+  const sortOptions = {};
+  if (sortBy) {
+    sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+  }
 
-  const contacts = await Contact.find({}, selectFields)
+  const contacts = await Contact.find(filter)
     .sort(sortOptions)
     .skip(skip)
     .limit(limit);
 
   return contacts;
-};
-
-export const getContactById = async (id) => {
-  return await Contact.findById(id);
-};
-
-export const createContact = async (contactData) => {
-  return await Contact.create(contactData);
-};
-
-export const updateContact = async (id, contactData) => {
-  return await Contact.findByIdAndUpdate(id, contactData, { new: true });
-};
-
-export const deleteContact = async (id) => {
-  return await Contact.findByIdAndDelete(id);
 };
