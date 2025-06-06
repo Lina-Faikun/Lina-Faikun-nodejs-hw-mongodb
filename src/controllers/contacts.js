@@ -1,28 +1,20 @@
 import * as contactsService from '../services/contacts.js';
 import createError from 'http-errors';
+import { parseQueryParams } from '../utils/parseQueryParams.js';
 
 // GET /contacts
 export const getAllContacts = async (req, res, next) => {
   try {
-    const {
-      page = 1,
-      limit = 10,
-      sortBy = 'name',
-      sortOrder = 'asc',
-      isFavourite,
-      contactType, 
-    } = req.query;
+    const { page, limit, sortBy, sortOrder, filter } = parseQueryParams(req.query);
+    const skip = (page - 1) * limit;
 
-    const paginationOptions = {
-      page: parseInt(page),
-      limit: parseInt(limit),
+    const contacts = await contactsService.getAllContacts({
+      filter,
+      skip,
+      limit,
       sortBy,
-      sortOrder,
-      isFavourite,
-      contactType, 
-    };
-
-    const contacts = await contactsService.getAllContacts(paginationOptions);
+      sortOrder
+    });
 
     res.status(200).json({
       status: 200,
@@ -33,6 +25,9 @@ export const getAllContacts = async (req, res, next) => {
     next(error);
   }
 };
+
+
+
 
 // GET /contacts/:contactId
 export const getContactById = async (req, res, next) => {
