@@ -26,9 +26,6 @@ export const getAllContacts = async (req, res, next) => {
   }
 };
 
-
-
-
 // GET /contacts/:contactId
 export const getContactById = async (req, res, next) => {
   try {
