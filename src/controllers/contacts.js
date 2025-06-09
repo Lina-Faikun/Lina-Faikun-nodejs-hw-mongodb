@@ -8,7 +8,7 @@ export const getAllContacts = async (req, res, next) => {
     const { page, limit, sortBy, sortOrder, filter } = parseQueryParams(req.query);
     const skip = (page - 1) * limit;
 
-    const contacts = await contactsService.getAllContacts({
+    const { contacts, totalItems } = await contactsService.getAllContacts({
       filter,
       skip,
       limit,
@@ -16,10 +16,20 @@ export const getAllContacts = async (req, res, next) => {
       sortOrder
     });
 
+    const totalPages = Math.ceil(totalItems / limit);
+
     res.status(200).json({
       status: 200,
-      message: 'Successfully retrieved all contacts',
-      data: contacts,
+      message: 'Successfully found contacts!',
+      data: {
+        data: contacts,
+        page,
+        perPage: limit,
+        totalItems,
+        totalPages,
+        hasPreviousPage: page > 1,
+        hasNextPage: page < totalPages
+      }
     });
   } catch (error) {
     next(error);
@@ -84,10 +94,7 @@ export const deleteContact = async (req, res, next) => {
     if (!deleted) {
       throw createError(404, 'Contact not found');
     }
-    res.status(200).json({
-      status: 200,
-      message: 'Contact deleted',
-    });
+    res.status(204).send(); // ✅ 204 No Content
   } catch (error) {
     next(error);
   }
