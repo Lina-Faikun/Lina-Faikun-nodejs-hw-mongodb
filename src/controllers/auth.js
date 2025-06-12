@@ -1,3 +1,4 @@
+// src/controllers/auth.js
 import * as authService from "../services/auth.js";
 import { registerSchema, loginSchema } from "../validations/authValidation.js";
 import createError from "http-errors";
@@ -23,13 +24,20 @@ export const login = async (req, res, next) => {
     const { error } = loginSchema.validate(req.body);
     if (error) throw createError(400, error.message);
 
-    const { user, accessToken, refreshToken } = await authService.login(req.body);
+    const { user, accessToken, refreshToken, session } = await authService.login(req.body);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 днів
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie("sessionId", session._id.toString(), {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
@@ -44,11 +52,12 @@ export const login = async (req, res, next) => {
 
 export const refresh = async (req, res, next) => {
   try {
-    const { refreshToken: oldToken } = req.cookies;
+    const { refreshToken, sessionId } = req.cookies;
+    if (!refreshToken || !sessionId) throw createError(401, "Missing cookies");
 
-    const { accessToken, refreshToken } = await authService.refresh(oldToken);
+    const { accessToken, newRefreshToken } = await authService.refresh(refreshToken, sessionId);
 
-    res.cookie("refreshToken", refreshToken, {
+    res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
@@ -67,9 +76,14 @@ export const refresh = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    const { refreshToken } = req.cookies;
-    await authService.logout(refreshToken);
+    const { sessionId } = req.cookies;
+    if (!sessionId) throw createError(401, "Session not found");
+
+    await authService.logout(sessionId);
+
     res.clearCookie("refreshToken", { httpOnly: true, secure: true, sameSite: "none" });
+    res.clearCookie("sessionId", { httpOnly: true, secure: true, sameSite: "none" });
+
     res.status(204).end();
   } catch (error) {
     next(error);

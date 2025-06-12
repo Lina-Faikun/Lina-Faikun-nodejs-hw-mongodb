@@ -1,3 +1,4 @@
+// server.js
 import express from "express";
 import cors from "cors";
 import logger from "pino";
@@ -19,8 +20,9 @@ app.get("/", (req, res) => {
   res.json({ message: "API is working!" });
 });
 
-app.use("/api/auth", authRouter); 
-app.use("/api/contacts", contactsRouter); 
+
+app.use("/auth", authRouter); 
+app.use("/contacts", contactsRouter); 
 
 app.use(notFoundHandler);
 app.use(errorHandler);
