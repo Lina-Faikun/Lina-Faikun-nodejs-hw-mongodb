@@ -32,7 +32,13 @@ export const login = async ({ email, password }) => {
   await Session.deleteMany({ userId: user._id });
 
   const tokens = generateTokens(user._id);
-  const session = await Session.create({ userId: user._id, ...tokens });
+  const session = await Session.create({
+    userId: user._id,
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+    accessTokenValidUntil: tokens.accessTokenValidUntil,
+    refreshTokenValidUntil: tokens.refreshTokenValidUntil,
+  });
 
   return {
     user,
@@ -60,7 +66,13 @@ export const refresh = async (refreshToken, sessionId) => {
   await Session.findByIdAndDelete(sessionId);
 
   const tokens = generateTokens(payload.userId);
-  await Session.create({ userId: payload.userId, ...tokens });
+  await Session.create({
+    userId: payload.userId,
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+    accessTokenValidUntil: tokens.accessTokenValidUntil,
+    refreshTokenValidUntil: tokens.refreshTokenValidUntil,
+  });
 
   return {
     accessToken: tokens.accessToken,
@@ -73,12 +85,21 @@ export const logout = async (sessionId) => {
 };
 
 function generateTokens(userId) {
+  const accessTokenValidUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 хв
+  const refreshTokenValidUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 днів
+
   const accessToken = jwt.sign({ userId }, ACCESS_TOKEN_SECRET, {
     expiresIn: ACCESS_TOKEN_EXPIRES_IN,
   });
+
   const refreshToken = jwt.sign({ userId }, REFRESH_TOKEN_SECRET, {
     expiresIn: REFRESH_TOKEN_EXPIRES_IN,
   });
 
-  return { accessToken, refreshToken };
+  return {
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil,
+    refreshTokenValidUntil,
+  };
 }
