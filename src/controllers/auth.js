@@ -1,4 +1,3 @@
-// src/controllers/auth.js
 import * as authService from "../services/auth.js";
 import { registerSchema, loginSchema } from "../validations/authValidation.js";
 import createError from "http-errors";
@@ -42,7 +41,7 @@ export const login = async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      message: "Successfully logged in an user!",
+      message: "Successfully logged in a user!",
       data: { accessToken },
     });
   } catch (error) {
