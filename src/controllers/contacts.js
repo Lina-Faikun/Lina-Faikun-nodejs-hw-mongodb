@@ -14,7 +14,7 @@ export const getAllContacts = async (req, res, next) => {
       limit,
       sortBy,
       sortOrder,
-      userId: req.user._id, 
+      userId: req.user._id,
     });
 
     const totalPages = Math.ceil(totalItems / limit);
@@ -41,7 +41,7 @@ export const getAllContacts = async (req, res, next) => {
 export const getContactById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const contact = await contactsService.getContactById(contactId, req.user._id); // 🔑 userId
+    const contact = await contactsService.getContactById(contactId, req.user._id);
     if (!contact) {
       throw createError(404, 'Contact not found');
     }
@@ -58,7 +58,12 @@ export const getContactById = async (req, res, next) => {
 // POST /contacts
 export const createContact = async (req, res, next) => {
   try {
-    const contactData = { ...req.body, userId: req.user._id }; 
+    const contactData = { ...req.body, userId: req.user._id };
+
+    if (req.file) {
+      contactData.photo = req.file.path; 
+    }
+
     const newContact = await contactsService.createContact(contactData);
     res.status(201).json({
       status: 201,
@@ -74,7 +79,13 @@ export const createContact = async (req, res, next) => {
 export const updateContact = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const updatedContact = await contactsService.updateContact(contactId, req.body, req.user._id); // 🔑 userId
+    const updateData = { ...req.body };
+
+    if (req.file) {
+      updateData.photo = req.file.path; 
+    }
+
+    const updatedContact = await contactsService.updateContact(contactId, updateData, req.user._id);
     if (!updatedContact) {
       throw createError(404, 'Contact not found');
     }
@@ -92,7 +103,7 @@ export const updateContact = async (req, res, next) => {
 export const deleteContact = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const deleted = await contactsService.deleteContact(contactId, req.user._id); // 🔑 userId
+    const deleted = await contactsService.deleteContact(contactId, req.user._id);
     if (!deleted) {
       throw createError(404, 'Contact not found');
     }
