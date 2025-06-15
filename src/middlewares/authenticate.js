@@ -10,12 +10,11 @@ const authenticate = async (req, res, next) => {
     const authHeader = req.headers.authorization || "";
     const [bearer, token] = authHeader.split(" ");
 
-   
     if (bearer !== "Bearer" || !token) {
       throw createError(401, "No access token provided");
     }
 
-   
+    
     let payload;
     try {
       payload = jwt.verify(token, ACCESS_TOKEN_SECRET);
@@ -26,7 +25,7 @@ const authenticate = async (req, res, next) => {
       throw createError(401, "Invalid token");
     }
 
-    
+   
     const session = await Session.findOne({
       userId: payload.userId,
       accessToken: token,
@@ -36,13 +35,13 @@ const authenticate = async (req, res, next) => {
       throw createError(401, "Session invalid or expired");
     }
 
-  
+    
     const user = await User.findById(payload.userId);
     if (!user) {
       throw createError(401, "User not found");
     }
 
-
+ 
     req.user = user;
     next();
   } catch (error) {
