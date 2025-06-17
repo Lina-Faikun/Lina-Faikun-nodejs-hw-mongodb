@@ -3,7 +3,7 @@ import { registerSchema, loginSchema, emailSchema, resetPasswordSchema } from ".
 import createError from "http-errors";
 import jwt from "jsonwebtoken";
 import  User  from "../models/user.js"; 
-import { sendEmail } from "../services/email.service.js";
+import { sendEmail } from "../services/emailservice.js";
 import bcrypt from "bcryptjs";
 
 export const register = async (req, res, next) => {

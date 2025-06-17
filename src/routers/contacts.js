@@ -1,14 +1,12 @@
 import express from "express";
-import multer from "multer";
-import { storage } from "../services/cloudinary.js";
 import * as contactsController from "../controllers/contacts.js";
 import validateId from "../middlewares/validateId.js";
 import validateBody from "../middlewares/validateBody.js";
 import { contactSchema, updateContactSchema } from "../schemas/contactSchema.js";
 import authenticate from "../middlewares/authenticate.js";
+import upload from "../middlewares/upload.js";
 
 const router = express.Router();
-const upload = multer({ storage }); 
 
 router.use(authenticate);
 
