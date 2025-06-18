@@ -61,7 +61,7 @@ export const createContact = async (req, res, next) => {
     const contactData = { ...req.body, userId: req.user._id };
 
     if (req.file) {
-      contactData.photo = req.file.path; 
+      contactData.photo = req.file.path || req.file.url || req.file.secure_url;
     }
 
     const newContact = await contactsService.createContact(contactData);
@@ -82,7 +82,7 @@ export const updateContact = async (req, res, next) => {
     const updateData = { ...req.body };
 
     if (req.file) {
-      updateData.photo = req.file.path; 
+      updateData.photo = req.file.path || req.file.url || req.file.secure_url;
     }
 
     const updatedContact = await contactsService.updateContact(contactId, updateData, req.user._id);
