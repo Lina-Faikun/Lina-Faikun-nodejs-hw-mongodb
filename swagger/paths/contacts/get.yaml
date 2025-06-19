@@ -1,0 +1,18 @@
+get:
+  tags:
+    - Contacts
+  summary: Отримати список контактів
+  operationId: getContacts
+  description: Повертає список контактів з можливістю фільтрації
+  security:
+    - bearerAuth: []
+  parameters:
+    - in: query
+      name: favorite
+      schema:
+        type: boolean
+      required: false
+      description: Фільтр за улюбленими
+  responses:
+    '200':
+      description: Успішно

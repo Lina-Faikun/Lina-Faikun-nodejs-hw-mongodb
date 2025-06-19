@@ -1,0 +1,25 @@
+patch:
+  tags:
+    - Contacts
+  summary: Оновити контакт
+  operationId: updateContact
+  description: Оновлює поля контакту
+  security:
+    - bearerAuth: []
+  parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/Contact.yaml'
+  responses:
+    '200':
+      description: Оновлено
+    '404':
+      description: Не знайдено
