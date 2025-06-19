@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import createError from "http-errors";
-
+import "dotenv/config";
 import User from "../models/user.js";
 import Session from "../models/session.js";
 
