@@ -4,8 +4,12 @@ import logger from "pino";
 import cookieParser from "cookie-parser";
 
 import swaggerUi from "swagger-ui-express";
-import YAML from "yamljs";
-const swaggerDocument = YAML.load("./docs/openapi.yaml");
+import fs from "fs";
+import path from "path";
+
+const swaggerDocument = JSON.parse(
+  fs.readFileSync(path.join("docs", "swagger.json"), "utf8")
+);
 
 import contactsRouter from "./routers/contacts.js";
 import authRouter from "./routers/auth.js";
@@ -26,7 +30,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRouter);
 app.use("/contacts", contactsRouter);
 
-// Swagger route:
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(notFoundHandler);

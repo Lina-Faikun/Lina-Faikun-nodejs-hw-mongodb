@@ -1,25 +1,75 @@
-patch:
-  tags:
-    - Contacts
-  summary: Оновити контакт
-  operationId: updateContact
-  description: Оновлює поля контакту
-  security:
-    - bearerAuth: []
-  parameters:
-    - in: path
-      name: id
-      required: true
-      schema:
-        type: string
-  requestBody:
+tags:
+  - Contacts
+summary: Patch contact by ID
+operationId: patchContact
+description: Change a contact by ID
+security:
+  - bearerAuth: []
+parameters:
+  - name: id
+    in: path
+    description: ID of the contact to patch
     required: true
+    schema:
+      type: string
+      example: 65e4decdd286b30065d54af9
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            description: Contact's name
+            type: string
+            example: John Doe
+          phoneNumber:
+            description: Contact's phone number
+            type: string
+            example: '+38120005555'
+          contactType:
+            description: Contact's type
+            type: string
+            enum: ['work', 'home', 'personal']
+            default: personal
+          email:
+            description: Contact's email
+            type: string
+            example: example@mail.com
+          isFavourite:
+            description: Whether the contact is a favourite
+            type: boolean
+            default: false
+            example: false
+          photo:
+            description: Contact's photo
+            type: string
+            format: binary
+responses:
+  '200':
+    description: Contact updated successfully
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas/Contact.yaml'
-  responses:
-    '200':
-      description: Оновлено
-    '404':
-      description: Не знайдено
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully patched a contact!
+            data:
+              $ref: '../../../components/schemas/Contact.yaml'
+  '400':
+    description: Bad Request
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+  '404':
+    description: Not Found
+  '500':
+    description: Internal Server Error
